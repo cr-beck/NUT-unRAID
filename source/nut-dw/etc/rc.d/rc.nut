@@ -7,7 +7,8 @@
 # Copyright Lime Technology (any and all other parts of Unraid)
 #
 # Copyright V'yacheslav Stetskevych (as original script author)
-# Copyright desertwitch (co-author and maintainer of this file)
+# Copyright desertwitch (co-author and previous author of this file)
+# Copyright cr-beck (co-author and maintainer of this file)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License 2
@@ -32,6 +33,26 @@ DOCROOT="/usr/local/emhttp/plugins/nut-dw"
 
 # read our configuration
 [ -e "$CONFIG" ] && source $CONFIG
+
+# Safely replace a single 1-based line in a file with literal content.
+# Avoids sed/shell interpretation of special characters (e.g. , & \ /)
+# in user-provided values such as passwords. The replacement is passed
+# through the environment so awk does not process escape sequences.
+nut_replace_line() {
+    local file="$1" line="$2"
+    REPL="$3" awk -v n="$line" 'NR==n{print ENVIRON["REPL"]; next} {print}' "$file" > "$file.tmp" \
+        && mv -f "$file.tmp" "$file"
+}
+
+# Quote an arbitrary value for the NUT configuration parser by wrapping it
+# in double quotes and escaping backslashes and double quotes. This allows
+# passwords to contain spaces and special characters.
+nut_quote() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    printf '"%s"' "$s"
+}
 
 error_at_start() {
     if [ -d $DOCROOT/misc ]; then
@@ -196,7 +217,8 @@ write_config() {
                 [ -z "$SNMPMIB" ] && SNMPMIB="auto"
 
                 var10="pollfreq = ${POLL}"
-                var11="community = ${COMMUNITY}"
+                # quote community so spaces/special characters are handled by the NUT parser
+                var11="community = $(nut_quote "${COMMUNITY}")"
                 var12="snmp_version = ${SNMPVER}"
 
                 if [ "$SNMPMIB" == "auto" ]; then
@@ -221,7 +243,7 @@ write_config() {
             fi
 
             sed -i "4 s/.*/$var10/" /etc/nut/ups.conf
-            sed -i "5 s/.*/$var11/" /etc/nut/ups.conf
+            nut_replace_line /etc/nut/ups.conf 5 "$var11"
             sed -i "6 s/.*/$var12/" /etc/nut/ups.conf
             sed -i "7 s/.*/$var13/" /etc/nut/ups.conf
             sed -i "8 s/.*/$var14/" /etc/nut/ups.conf
@@ -241,8 +263,12 @@ write_config() {
         MONPASS="$(echo "$MONPASS" | base64 --decode)"
         SLAVEPASS="$(echo "$SLAVEPASS" | base64 --decode)"
 
-        var1="MONITOR ${NAME}@${IPADDR} 1 ${MONUSER} ${MONPASS} ${MONITOR}"
-        sed -i "1 s,.*,$var1," /etc/nut/upsmon.conf
+        # quote passwords so spaces/special characters are handled by the NUT parser
+        MONPASS_Q="$(nut_quote "$MONPASS")"
+        SLAVEPASS_Q="$(nut_quote "$SLAVEPASS")"
+
+        var1="MONITOR ${NAME}@${IPADDR} 1 ${MONUSER} ${MONPASS_Q} ${MONITOR}"
+        nut_replace_line /etc/nut/upsmon.conf 1 "$var1"
 
         # Set if the ups should be turned off
         if [ "$UPSKILL" == "enable" ]; then
@@ -267,13 +293,13 @@ write_config() {
         if [ "$MODE" != "slave" ]; then
             # Set upsd users
             var18="[${MONUSER}]"
-            var19="password = ${MONPASS}"
+            var19="password = ${MONPASS_Q}"
             var21="[${SLAVEUSER}]"
-            var22="password = ${SLAVEPASS}"
-            sed -i "6 s,.*,$var18," /etc/nut/upsd.users
-            sed -i "7 s,.*,$var19," /etc/nut/upsd.users
-            sed -i "9 s,.*,$var21," /etc/nut/upsd.users
-            sed -i "10 s,.*,$var22," /etc/nut/upsd.users
+            var22="password = ${SLAVEPASS_Q}"
+            nut_replace_line /etc/nut/upsd.users 6 "$var18"
+            nut_replace_line /etc/nut/upsd.users 7 "$var19"
+            nut_replace_line /etc/nut/upsd.users 9 "$var21"
+            nut_replace_line /etc/nut/upsd.users 10 "$var22"
         fi
     fi
 

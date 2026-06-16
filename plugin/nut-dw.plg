@@ -2,15 +2,15 @@
 
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "nut-dw">
-<!ENTITY author    "desertwitch">
-<!ENTITY version   "2026.04.13">
+<!ENTITY author    "cr-beck">
+<!ENTITY version   "2026.06.15">
 <!ENTITY launch    "Settings/NUTsettings">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/&author;/NUT-unRAID/master">
 <!ENTITY pluginURL "&gitURL;/plugin/&name;.plg">
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">
-<!ENTITY plgNAME   "nut-plugin-2026.04.13-x86_64-1">
-<!ENTITY plgMD5    "60fbc05ae1207caf51d388c05a17f5c3">
+<!ENTITY plgNAME   "nut-plugin-2026.06.15-x86_64-1">
+<!ENTITY plgMD5    "0605ef19e7684cbcd145efd415974d24">
 <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
 
@@ -18,6 +18,11 @@
 
 <CHANGES>
 ## Network UPS Tools (NUT) for UNRAID
+###2026.06.15
+- fix: allow underscores in the UPS name field in the GUI (NUT permits them server-side)
+- fix: allow hyphens and underscores in the NUT monitor/slave username fields in the GUI
+- fix: correctly handle spaces and special characters in NUT monitor/slave passwords
+- fix: correctly handle spaces and special characters in the SNMP community string
 ###2026.04.13
 - new: preview backend updated (to nut master 0e051f9)
 - new: default backend updated (nut 2.8.4 to nut 2.8.5)

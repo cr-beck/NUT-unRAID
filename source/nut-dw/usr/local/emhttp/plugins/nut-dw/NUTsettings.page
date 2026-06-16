@@ -14,7 +14,9 @@ Markdown="false"
  * Copyright Bergware International (parts of code from Web GUI)
  * Copyright Lime Technology (any and all other parts of Unraid)
  *
- * Copyright desertwitch (as author and maintainer of this file)
+ * Copyright desertwitch (as author and source of this file)
+ *
+ * Copyright cr-beck (as author and maintainer of this file)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
@@ -347,13 +349,12 @@ if (file_exists('/usr/local/emhttp/plugins/nut-dw/misc/start-failed')) {
             <dt>NUT Monitor Password:</dt>
             <dd>
                 <input id="MONPASS" type="password" class="narrow nut-run" name="MONPASS" value="<?=$nut_monpass?>">
-                <i id="monpass-htext" class="fa fa-hand-paper-o tooltip-nutsett" title="If possible use only letters and numbers!" style="display:none;color:red;cursor:help;"></i>
             </dd>
         </dl>
 
         <blockquote class="inline_help">
             <p>The password to access the NUT master server.</p>
-            <p>It is recommended to use <strong>only letters and numbers</strong> for the password (no spaces or special symbols).</p>
+            <p>Spaces and special symbols are supported (please avoid non-ASCII characters).</p>
         </blockquote>
 
         <dl>
@@ -396,13 +397,12 @@ if (file_exists('/usr/local/emhttp/plugins/nut-dw/misc/start-failed')) {
                 <dt>NUT Slave Password:</dt>
                 <dd>
                     <input id="SLAVEPASS" type="password" class="narrow nut-run" name="SLAVEPASS" value="<?=$nut_slavepass?>">
-                    <i id="slavepass-htext" class="fa fa-hand-paper-o tooltip-nutsett" title="If possible use only letters and numbers!" style="display:none;color:red;cursor:help;"></i>
                 </dd>
             </dl>
 
             <blockquote class="inline_help">
                 <p>The password for NUT slaves to use connecting to the NUT master server.</p>
-                <p>It is recommended to use <strong>only letters and numbers</strong> for the password (no spaces or special symbols).</p>
+                <p>Spaces and special symbols are supported (please avoid non-ASCII characters).</p>
                 <p><u>Note:</u> NUT is configured to listen on all interfaces (<strong><em>0.0.0.0</em></strong>).</p>
             </blockquote>
         </div>
@@ -1214,14 +1214,6 @@ function checkPOWER() {
 function decData() {
     $('#MONPASS').val(atob($('#MONPASS').val()));
     $('#SLAVEPASS').val(atob($('#SLAVEPASS').val()));
-
-    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    if(format.test($('#MONPASS').val())) {
-        $('#monpass-htext').show();
-    }
-    if(format.test($('#SLAVEPASS').val())) {
-        $('#slavepass-htext').show();
-    }
 }
 
 function RotateNUTLog() {
@@ -1306,11 +1298,11 @@ function getNUTclients() {
 $(function() {
     showStatus('upsmon');
 
-    $('.nut-name').mask('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ', {translation:  {'Z': {pattern: /[A-Za-z0-9-]/, optional: true}}});
+    $('.nut-name').mask('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ', {translation:  {'Z': {pattern: /[A-Za-z0-9_-]/, optional: true}}});
     $('.nut-ipaddr').mask('0ZZ.0ZZ.0ZZ.0ZZZZZZZZ', {translation:  {'Z': {pattern: /[0-9:]/, optional: true}}});
 
     $('.nut-numeric').mask('ZZZZZZZZZZZZZZZ', {translation:  {'Z': {pattern: /[0-9-]/, optional: true}}});
-    $('.nut-alphanumeric').mask('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ', {translation:  {'Z': {pattern: /[A-Za-z0-9]/, optional: true}}});
+    $('.nut-alphanumeric').mask('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ', {translation:  {'Z': {pattern: /[A-Za-z0-9_-]/, optional: true}}});
 
     if (typeof swal === "function") {
         $('#SCAN').click(function(){ swal({title:"Warning",text:"Please always attempt to (manually) set up your respective UPS Driver with the UPS Port on 'auto' first, this is more flexible and preferable to running the 'Auto Config' program straight after installation.<br><br>This tool is for cases where the UPS driver fails to otherwise find your UPS device, even with the correct UPS Driver and UPS Port on 'auto'.<br><br>Beware that 'Auto Config' will make your UPS Driver blind to anything else than that specific UPS device it detected on that specific USB port (that means you cannot change the USB port afterwards).<br><br>In case 'Auto Config' detects a UPS but still does not work for you, please make sure to always 'Reset Config' to start with a fresh configuration before attemping anything else configuration-wise.",type:"warning",html:true,showCancelButton:true}, ScanUPS); });

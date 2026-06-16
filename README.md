@@ -1,21 +1,9 @@
 Network UPS Tools (NUT) for UNRAID
 ================
-_A refactored, modernized version of the original NUT plugin with a focus on frequent updates._
-
-![GitHub Tag](https://img.shields.io/github/v/tag/desertwitch/NUT-unRAID?label=release&color=peru)
-[![CodeFactor](https://www.codefactor.io/repository/github/desertwitch/nut-unraid/badge)](https://www.codefactor.io/repository/github/desertwitch/nut-unraid)
 
 The NUT plugin for UNRAID has been developed by various people since 2015.
 
-This fork is my personal interest to modernize and streamline the existing code base and its dependencies.
-
-My vision for this plugin, which basically acts as a frontend to NUT, can be summed up as follows:
-
-* Debloated code with a consistent structure, permissioning and packaging throughout the project.
-
-* Frequent updates of the NUT backend with fresh builds from the official master branch for the lastest changes.
-
-* Frequent updates of the NUT frontend with meaningful changes improving both stability and ease of use.
+This fork is for my personal updates to this plugin with sensible updates allowing for hyphens and underscores in the NUT configuration for UPS names or usernames, and special characters in the NUT password.
 
 This project continues to be licensed under GPL2 and/or GPL3 - see LICENSE files for information!
 
