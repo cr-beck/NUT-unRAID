@@ -10,7 +10,7 @@
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">
 <!ENTITY plgNAME   "nut-plugin-2026.06.15-x86_64-1">
-<!ENTITY plgMD5    "0605ef19e7684cbcd145efd415974d24">
+<!ENTITY plgMD5    "1600820b539427640c6a5e6ff7de308b">
 <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
 
